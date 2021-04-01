@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/cuckooemm/oceanengine/models"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"probe_material_plan/marketing/oceanengine/models"
 )
 
 type AdvertiserApiService service
@@ -42,8 +42,9 @@ func (a AdvertiserApiService) GetDailyBudget(ctx context.Context, advIds []int64
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }
+
 func (a *AdvertiserApiService) BudgetUpdate(ctx context.Context, params models.AdvertiserBudgetUpdateReq) (http.Header, error) {
 	var (
 		apiPath      = a.client.Cfg.BasePath + "/advertiser/update/budget/"
@@ -76,5 +77,5 @@ func (a *AdvertiserApiService) BudgetUpdate(ctx context.Context, params models.A
 		}
 		return rsp.Header, nil
 	}
-	return rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }

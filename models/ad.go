@@ -3,16 +3,16 @@ package models
 import "github.com/antihax/optional"
 
 type AdAdAddReq struct {
-	AdvertiserId int64  `json:"advertiser_id"`       // 广告主ID
-	CampaignId   string `json:"campaign_id"`         // 广告组ID。注意：广告组ID要求属于广告主ID，且是非删除广告组ID
-	Name         string `json:"name"`                // 广告计划名称，长度为1-100个字符，其中1个中文字符算2位。名称不可重复，否则会报错
-	Operation    string `json:"operation,omitempty"` // 计划状态 默认值： "enable"开启状态 允许值: "enable"开启,"disable"关闭
+	AdvertiserId int64  `json:"advertiser_id,omitempty"` // 广告主ID
+	CampaignId   string `json:"campaign_id,omitempty"`   // 广告组ID。注意：广告组ID要求属于广告主ID，且是非删除广告组ID
+	Name         string `json:"name,omitempty"`          // 广告计划名称，长度为1-100个字符，其中1个中文字符算2位。名称不可重复，否则会报错
+	Operation    string `json:"operation,omitempty"`     // 计划状态 默认值： "enable"开启状态 允许值: "enable"开启,"disable"关闭
 	// 投放范围
-	DeliveryRange  AdDeliveryRange `json:"delivery_range"`             // 投放范围。 默认值: "DEFAULT"  允许值: "DEFAULT"默认, "UNION"穿山甲
+	DeliveryRange  AdDeliveryRange `json:"delivery_range,omitempty"`   // 投放范围。 默认值: "DEFAULT"  允许值: "DEFAULT"默认, "UNION"穿山甲
 	UnionVideoType string          `json:"union_video_type,omitempty"` // 投放形式（穿山甲视频创意类型），当delivery_range为"UNION"时必填
 	// 推广目标
 	// 推广目的为应用推广（landing_type=APP）时投放目标参数
-	DownloadType         DownloadType        `json:"download_type"`                    // 下载方式 默认值：DOWNLOAD_URL下载链接
+	DownloadType         DownloadType        `json:"download_type,omitempty"`          // 下载方式 默认值：DOWNLOAD_URL下载链接
 	DownloadUrl          string              `json:"download_url,omitempty"`           // 下载链接，当download_type为DOWNLOAD_URL或者QUICK_APP_URL时必填
 	QuickAppUrl          string              `json:"quick_app_url,omitempty"`          // 快应用链接，当 download_type 为QUICK_APP_URL时必填
 	ExternalUrl          string              `json:"external_url,omitempty"`           // 落地页链接（支持橙子建站落地页和第三方落地页） 当推广目的为APP类型，且download_type为EXTERNAL_URL时必填
@@ -37,10 +37,10 @@ type AdAdAddReq struct {
 	//OpenUrl         string          `json:"open_url,omitempty"`         // 直达链接，当传入落地页的时候可选择传入直达链接
 
 	// 推广目的为门店推广（landing_type=STORE）时投放目标参数
-	StoreproUnit       string  `json:"storepro_unit,omitempty"`        // 投放内容 允许值: "STORE"门店, "STORE_ACTIVITY"活动 目前暂时不支持线下商品类型
+	StoreProUnit       string  `json:"storepro_unit,omitempty"`        // 投放内容 允许值: "STORE"门店, "STORE_ACTIVITY"活动 目前暂时不支持线下商品类型
 	StoreType          string  `json:"store_type,omitempty"`           // 门店类型，（storepro_unit 为 "STORE","STORE_ACTIVITY" 时必填）
 	AdvertiserStoreIds []int64 `json:"advertiser_store_ids,omitempty"` // 门店ID列表 （storepro_unit 为 "STORE" 时必填） 最多可选择2000个
-	StoreproPackId     int64   `json:"storepro_pack_id,omitempty"`     // 活动ID （storepro_unit 为 "STORE_ACTIVITY" 时必填）
+	StoreProPackId     int64   `json:"storepro_pack_id,omitempty"`     // 活动ID （storepro_unit 为 "STORE_ACTIVITY" 时必填）
 	//ConvertId          int64   `json:"convert_id,omitempty"`           // 转化目标， 当出价方式为"OCPM"时必填，当出价方式为"CPC"和"CPM"时非必填。
 	//OpenUrl            string  `json:"open_url,omitempty"`             // 直达链接
 
@@ -103,32 +103,32 @@ type CommodityAudience struct {
 
 // 预算与出价相关字段
 type BudgetAndBid struct {
-	SmartBidType    SmartBidType    `json:"smart_bid_type"`           // 投放场景(出价方式) 允许值: 常规投放"SMART_BID_CUSTOM", 放量投放"SMART_BID_CONSERVATIVE" 概念解释：常规投放：控制成本，尽量消耗完预算；放量投放：接受成本上浮，尽量消耗更多预算
-	AdjustCpa       int64           `json:"adjust_cpa,omitempty"`     // 是否调整自动出价，意味如果预期成本不在范围内将在此基础上调整，仅OCPM支持。 当smart_bid_type=SMART_BID_CONSERVATIVE时选填  当smart_bid_type为"SMART_BID_CONSERVATIVE"且adjust_cpa=0时，cpa_bid由系统自动计算  当smart_bid_type为"SMART_BID_CONSERVATIVE" 且adjust_cpa=1时，cpa_bid必填  允许值: "0", "1"  默认值: "0"
-	FlowControlMode FlowControlMode `json:"flow_control_mode"`        // 竞价策略(投放方式) 允许值: "FLOW_CONTROL_MODE_FAST"优先跑量（对应CPC的加速投放）, "FLOW_CONTROL_MODE_SMOOTH"优先低成本（对应CPC的标准投放）, "FLOW_CONTROL_MODE_BALANCE"均衡投放（新增字段）
-	BudgetMode      BudgetMode      `json:"budget_mode"`              // 预算类型(创建后不可修改) 允许值: "BUDGET_MODE_DAY"日预算, "BUDGET_MODE_TOTAL"总预算
-	Budget          int64           `json:"budget"`                   // 预算(出价方式为CPC、CPM、CPV时，不少于100元；出价方式为OCPM、OCPC时，不少于300元；24小时内修改预算操作，不能超过20次，24小时是指自然天的24小时；单次修改预算幅度不能低于100元（增加或者减少）；修改后预算金额，不能低于当前已消费金额的105%，以整百单位向上取整；取值范围: ≥ 0
-	ScheduleType    ScheduleType    `json:"schedule_type"`            // 投放时间类型 允许值: "SCHEDULE_FROM_NOW"从今天起长期投放, "SCHEDULE_START_END"设置开始和结束日期
-	StartTime       string          `json:"start_time,omitempty"`     // 投放起始时间，当schedule_type为"SCHEDULE_START_END"时必填，形式如：2017-01-01 00:00 广告投放起始时间不允许修改
-	EndTime         string          `json:"end_time,omitempty"`       // 投放结束时间，当schedule_type为"SCHEDULE_START_END"时必填，形式如：2017-01-01 00:00
-	ScheduleTime    string          `json:"schedule_time,omitempty"`  // 投放时段，默认全时段投放，格式是48*7位字符串，且都是0或1。也就是以半个小时为最小粒度，周一至周日每天分为48个区段，0为不投放，1为投放，不传、全传0、全传1均代表全时段投放。 例如：填写"000000000000000000000001111000000000000000000000000000000000000000000001111000000000000000000000000000000000000000000001111000000000000000000000000000000000000000000001111000000000000000000000000000000000000000000001111000000000000000000000000000000000000000000001111000000000000000000000000000000000000000000001111000000000000000000000"，则投放时段为周一到周日的11:30~13:30
-	Pricing         AdPricingType   `json:"pricing"`                  // 付费方式（计划出价类型（目前仅穿山甲类型支持OCPC(具体方式：出价类型传OCPC类型，cpa_bid传值 )） 决定投放目标的类型，比如CPC表示点击量，OCPM表示转化量
-	Bid             float64         `json:"bid,omitempty"`            // 点击出价/展示出价，当pricing为"CPC"、"CPM"、"CPA"出价方式时必填 pricing为"CPC"时取值范围：0.2-100元； pricing为"CPM"时取值范围：4-100元; pricing为"CPA"时取值范围：1-1500元; 出价不能大于预算否则会报错
-	CpaBid          float64         `json:"cpa_bid,omitempty"`        // 目标转化出价/预期成本， 当pricing为"OCPM"、"OCPC"出价方式时必填 pricing为"OCPC"时取值范围：0.1-10000元； pricing为"OCPM"时取值范围：0.1-10000元； 出价不能大于预算否则会报错
-	DeepBidType     AdDeepBidType   `json:"deep_bid_type,omitempty"`  // 深度优化方式 对于每次付费的转化，深度优化类型需要设置为BID_PER_ACTION（每次付费出价） 具体概念见【深度优化方式】  当转化目标中含有深度转化时，该字段必填。 API后期会上线获取可用深度优化方式，请关注上线通知
-	DeepCpaBid      float64         `json:"deep_cpabid,omitempty"`    // 深度优化出价，deep_bid_type为"DEEP_BID_MIN"时必填。当对应的转化convert_id，设定深度转化目标时才会有效。
-	LubanRoiGoal    float64         `json:"luban_roi_goal,omitempty"` // 鲁班目标ROI出价策略系数。推广目的为商品推广(GOODS)时可填。当传入该参数时，表示启用鲁班ROI优化，支持范围(0,100]，精度：保留小数点后四位
-	RoiGoal         float64         `json:"roi_goal,omitempty"`       // 深度转化ROI系数, 范围(0,5]，精度：保留小数点后四位, deep_bid_type为"ROI_COEFFICIENT"时必填
+	SmartBidType    SmartBidType    `json:"smart_bid_type,omitempty"`    // 投放场景(出价方式) 允许值: 常规投放"SMART_BID_CUSTOM", 放量投放"SMART_BID_CONSERVATIVE" 概念解释：常规投放：控制成本，尽量消耗完预算；放量投放：接受成本上浮，尽量消耗更多预算
+	AdjustCpa       int64           `json:"adjust_cpa,omitempty"`        // 是否调整自动出价，意味如果预期成本不在范围内将在此基础上调整，仅OCPM支持。 当smart_bid_type=SMART_BID_CONSERVATIVE时选填  当smart_bid_type为"SMART_BID_CONSERVATIVE"且adjust_cpa=0时，cpa_bid由系统自动计算  当smart_bid_type为"SMART_BID_CONSERVATIVE" 且adjust_cpa=1时，cpa_bid必填  允许值: "0", "1"  默认值: "0"
+	FlowControlMode FlowControlMode `json:"flow_control_mode,omitempty"` // 竞价策略(投放方式) 允许值: "FLOW_CONTROL_MODE_FAST"优先跑量（对应CPC的加速投放）, "FLOW_CONTROL_MODE_SMOOTH"优先低成本（对应CPC的标准投放）, "FLOW_CONTROL_MODE_BALANCE"均衡投放（新增字段）
+	BudgetMode      BudgetMode      `json:"budget_mode,omitempty"`       // 预算类型(创建后不可修改) 允许值: "BUDGET_MODE_DAY"日预算, "BUDGET_MODE_TOTAL"总预算
+	Budget          int64           `json:"budget,omitempty"`            // 预算(出价方式为CPC、CPM、CPV时，不少于100元；出价方式为OCPM、OCPC时，不少于300元；24小时内修改预算操作，不能超过20次，24小时是指自然天的24小时；单次修改预算幅度不能低于100元（增加或者减少）；修改后预算金额，不能低于当前已消费金额的105%，以整百单位向上取整；取值范围: ≥ 0
+	ScheduleType    ScheduleType    `json:"schedule_type,omitempty"`     // 投放时间类型 允许值: "SCHEDULE_FROM_NOW"从今天起长期投放, "SCHEDULE_START_END"设置开始和结束日期
+	StartTime       string          `json:"start_time,omitempty"`        // 投放起始时间，当schedule_type为"SCHEDULE_START_END"时必填，形式如：2017-01-01 00:00 广告投放起始时间不允许修改
+	EndTime         string          `json:"end_time,omitempty"`          // 投放结束时间，当schedule_type为"SCHEDULE_START_END"时必填，形式如：2017-01-01 00:00
+	ScheduleTime    string          `json:"schedule_time,omitempty"`     // 投放时段，默认全时段投放，格式是48*7位字符串，且都是0或1。也就是以半个小时为最小粒度，周一至周日每天分为48个区段，0为不投放，1为投放，不传、全传0、全传1均代表全时段投放。 例如：填写"000000000000000000000001111000000000000000000000000000000000000000000001111000000000000000000000000000000000000000000001111000000000000000000000000000000000000000000001111000000000000000000000000000000000000000000001111000000000000000000000000000000000000000000001111000000000000000000000000000000000000000000001111000000000000000000000"，则投放时段为周一到周日的11:30~13:30
+	Pricing         AdPricingType   `json:"pricing,omitempty"`           // 付费方式（计划出价类型（目前仅穿山甲类型支持OCPC(具体方式：出价类型传OCPC类型，cpa_bid传值 )） 决定投放目标的类型，比如CPC表示点击量，OCPM表示转化量
+	Bid             float64         `json:"bid,omitempty"`               // 点击出价/展示出价，当pricing为"CPC"、"CPM"、"CPA"出价方式时必填 pricing为"CPC"时取值范围：0.2-100元； pricing为"CPM"时取值范围：4-100元; pricing为"CPA"时取值范围：1-1500元; 出价不能大于预算否则会报错
+	CpaBid          float64         `json:"cpa_bid,omitempty"`           // 目标转化出价/预期成本， 当pricing为"OCPM"、"OCPC"出价方式时必填 pricing为"OCPC"时取值范围：0.1-10000元； pricing为"OCPM"时取值范围：0.1-10000元； 出价不能大于预算否则会报错
+	DeepBidType     AdDeepBidType   `json:"deep_bid_type,omitempty"`     // 深度优化方式 对于每次付费的转化，深度优化类型需要设置为BID_PER_ACTION（每次付费出价） 具体概念见【深度优化方式】  当转化目标中含有深度转化时，该字段必填。 API后期会上线获取可用深度优化方式，请关注上线通知
+	DeepCpaBid      float64         `json:"deep_cpabid,omitempty"`       // 深度优化出价，deep_bid_type为"DEEP_BID_MIN"时必填。当对应的转化convert_id，设定深度转化目标时才会有效。
+	LubanRoiGoal    float64         `json:"luban_roi_goal,omitempty"`    // 鲁班目标ROI出价策略系数。推广目的为商品推广(GOODS)时可填。当传入该参数时，表示启用鲁班ROI优化，支持范围(0,100]，精度：保留小数点后四位
+	RoiGoal         float64         `json:"roi_goal,omitempty"`          // 深度转化ROI系数, 范围(0,5]，精度：保留小数点后四位, deep_bid_type为"ROI_COEFFICIENT"时必填
 }
 
 type AdAdAddRsp struct {
-	Code      int            `json:"code"`
-	Message   string         `json:"message"`
-	Data      AdAdAddRspData `json:"data"`
-	RequestId string         `json:"request_id"`
+	Code      int            `json:"code,omitempty"`
+	Message   string         `json:"message,omitempty"`
+	Data      AdAdAddRspData `json:"data,omitempty"`
+	RequestId string         `json:"request_id,omitempty"`
 }
 type AdAdAddRspData struct {
-	AdId int64 `json:"ad_id"`
+	AdId int64 `json:"ad_id,omitempty"`
 }
 
 type AdAdGetOpts struct {
@@ -147,15 +147,15 @@ type AdAdGetFiltering struct {
 }
 
 type AdAdGetRsp struct {
-	Code      int            `json:"code"`
-	Message   string         `json:"message"`
-	Data      AdAdGetRspData `json:"data"`
-	RequestId string         `json:"request_id"`
+	Code      int            `json:"code,omitempty"`
+	Message   string         `json:"message,omitempty"`
+	Data      AdAdGetRspData `json:"data,omitempty"`
+	RequestId string         `json:"request_id,omitempty"`
 }
 
 type AdAdGetRspData struct {
-	List     []AdAdGetRspDataList `json:"list"`
-	PageInfo PageInfo             `json:"page_info"`
+	List     []AdAdGetRspDataList `json:"list,omitempty"`
+	PageInfo PageInfo             `json:"page_info,omitempty"`
 }
 
 type Geolocation struct {
@@ -171,58 +171,58 @@ type Geolocation struct {
 }
 
 type AdAdGetRspDataList struct {
-	Id                   int64    `json:"id"`                     // 计划ID
-	AdId                 int64    `json:"ad_id"`                  // 计划ID,返回值同id
-	Name                 string   `json:"name"`                   // 计划名称
-	AdvertiserId         int64    `json:"advertiser_id"`          // 广告主ID
-	CampaignId           int64    `json:"campaign_id"`            // 广告组ID
-	ModifyTime           string   `json:"modify_time"`            // 计划上次修改时间标识(用于更新计划时提交,服务端判断是否基于最新信息修改)
-	AdModifyTime         string   `json:"ad_modify_time"`         // 计划上次修改时间
-	AdCreateTime         string   `json:"ad_create_time"`         // 计划创建时间
-	Status               string   `json:"status"`                 // 广告计划投放状态,详见【附录-广告计划投放状态】(进入投放之前,优先披露审核状态,此时优先于启用暂停,启用暂停信息以opt_status为准)
-	OptStatus            string   `json:"opt_status"`             // 广告计划操作状态 允许值: "AD_STATUS_ENABLE","AD_STATUS_DISABLE"
-	DeliveryRange        string   `json:"delivery_range"`         // 投放范围
-	UnionVideoType       string   `json:"union_video_type"`       // 投放形式（穿山甲视频创意类型）默认值: ORIGINAL_VIDEO原生 允许值: "ORIGINAL_VIDEO"原生, "REWARDED_VIDEO"激励视频,"SPLASH_VIDEO"开屏
-	DownloadType         string   `json:"download_type"`          // 应用下载方式，推广目的为APP时有值。返回值：DOWNLOAD_URL下载链接，QUICK_APP_URL快应用+下载链接，EXTERNAL_URL落地页链接
-	DownloadUrl          string   `json:"download_url"`           // 下载链接，当推广类型为应用推广，且当download_type为DOWNLOAD_URL或者QUICK_APP_URL时有值
-	QuickAppUrl          string   `json:"quick_app_url"`          // 快应用链接，当推广类型为应用推广，且download_type为QUICK_APP_URL时有值
-	ExternalUrl          string   `json:"external_url"`           // 落地页链接，投放内容或下载方式为落地页时有值
-	AppType              string   `json:"app_type"`               // 下载类型，当推广类型为应用推广且download_type为DOWNLOAD_URL或者QUICK_APP_URL时或当推广类型为DPA(商品目录推广)且dpa_adtype为DPA_APP有值
-	DownloadMode         string   `json:"download_mode"`          // 优先从系统应用商店下载（下载模式） 允许值：APP_STORE_DELIVERY（仅安卓应用下载支持）、 DEFAULT当应用下载时，默认default下载，可选用APP_STORE_DELIVERY（应用商店直投），当为该值时，将优先跳转目标应用对应手机系统应用商店安装详情页，跳转失败则使用下载链接下载。 请确保投放的应用在应用商店内已上架
-	ConvertId            string   `json:"convert_id"`             // 转化目标，其中convert_id数值较小时为预定义转化，具体枚举可查看【附录-预定义转化类型】
-	ExternalActions      []string `json:"external_actions"`       // 转化类型，目前当推广类型为抖音时有值，允许值："AD_CONVERT_TYPE_FOLLOW_ACTION", "AD_CONVERT_TYPE_MESSAGE_ACTION", "AD_CONVERT_TYPE_INTERACTION"
-	OpenUrl              string   `json:"open_url"`               // 直达链接(点击唤起APP)
-	AdvancedCreativeType string   `json:"advanced_creative_type"` // 附加创意类型 允许值: ATTACHED_CREATIVE_GAME_PACKAGE游戏礼包码,ATTACHED_CREATIVE_GAME_FORM游戏表单收集,ATTACHED_CREATIVE_GAME_SUBSCRIBE游戏预约,ATTACHED_CREATIVE_NONE无 推广目的为应用推广类型、下载方式选择下载链接且下载链接为安卓应用下载时才可以设置
+	Id                   int64    `json:"id,omitempty"`                     // 计划ID
+	AdId                 int64    `json:"ad_id,omitempty"`                  // 计划ID,返回值同id
+	Name                 string   `json:"name,omitempty"`                   // 计划名称
+	AdvertiserId         int64    `json:"advertiser_id,omitempty"`          // 广告主ID
+	CampaignId           int64    `json:"campaign_id,omitempty"`            // 广告组ID
+	ModifyTime           string   `json:"modify_time,omitempty"`            // 计划上次修改时间标识(用于更新计划时提交,服务端判断是否基于最新信息修改)
+	AdModifyTime         string   `json:"ad_modify_time,omitempty"`         // 计划上次修改时间
+	AdCreateTime         string   `json:"ad_create_time,omitempty"`         // 计划创建时间
+	Status               string   `json:"status,omitempty"`                 // 广告计划投放状态,详见【附录-广告计划投放状态】(进入投放之前,优先披露审核状态,此时优先于启用暂停,启用暂停信息以opt_status为准)
+	OptStatus            string   `json:"opt_status,omitempty"`             // 广告计划操作状态 允许值: "AD_STATUS_ENABLE","AD_STATUS_DISABLE"
+	DeliveryRange        string   `json:"delivery_range,omitempty"`         // 投放范围
+	UnionVideoType       string   `json:"union_video_type,omitempty"`       // 投放形式（穿山甲视频创意类型）默认值: ORIGINAL_VIDEO原生 允许值: "ORIGINAL_VIDEO"原生, "REWARDED_VIDEO"激励视频,"SPLASH_VIDEO"开屏
+	DownloadType         string   `json:"download_type,omitempty"`          // 应用下载方式，推广目的为APP时有值。返回值：DOWNLOAD_URL下载链接，QUICK_APP_URL快应用+下载链接，EXTERNAL_URL落地页链接
+	DownloadUrl          string   `json:"download_url,omitempty"`           // 下载链接，当推广类型为应用推广，且当download_type为DOWNLOAD_URL或者QUICK_APP_URL时有值
+	QuickAppUrl          string   `json:"quick_app_url,omitempty"`          // 快应用链接，当推广类型为应用推广，且download_type为QUICK_APP_URL时有值
+	ExternalUrl          string   `json:"external_url,omitempty"`           // 落地页链接，投放内容或下载方式为落地页时有值
+	AppType              string   `json:"app_type,omitempty"`               // 下载类型，当推广类型为应用推广且download_type为DOWNLOAD_URL或者QUICK_APP_URL时或当推广类型为DPA(商品目录推广)且dpa_adtype为DPA_APP有值
+	DownloadMode         string   `json:"download_mode,omitempty"`          // 优先从系统应用商店下载（下载模式） 允许值：APP_STORE_DELIVERY（仅安卓应用下载支持）、 DEFAULT当应用下载时，默认default下载，可选用APP_STORE_DELIVERY（应用商店直投），当为该值时，将优先跳转目标应用对应手机系统应用商店安装详情页，跳转失败则使用下载链接下载。 请确保投放的应用在应用商店内已上架
+	ConvertId            string   `json:"convert_id,omitempty"`             // 转化目标，其中convert_id数值较小时为预定义转化，具体枚举可查看【附录-预定义转化类型】
+	ExternalActions      []string `json:"external_actions,omitempty"`       // 转化类型，目前当推广类型为抖音时有值，允许值："AD_CONVERT_TYPE_FOLLOW_ACTION", "AD_CONVERT_TYPE_MESSAGE_ACTION", "AD_CONVERT_TYPE_INTERACTION"
+	OpenUrl              string   `json:"open_url,omitempty"`               // 直达链接(点击唤起APP)
+	AdvancedCreativeType string   `json:"advanced_creative_type,omitempty"` // 附加创意类型 允许值: ATTACHED_CREATIVE_GAME_PACKAGE游戏礼包码,ATTACHED_CREATIVE_GAME_FORM游戏表单收集,ATTACHED_CREATIVE_GAME_SUBSCRIBE游戏预约,ATTACHED_CREATIVE_NONE无 推广目的为应用推广类型、下载方式选择下载链接且下载链接为安卓应用下载时才可以设置
 
-	StoreproUnit        string               `json:"storepro_unit"`          // 门店推广-投放内容，当推广目的为STORE(门店推广)时有值。 取值: "STORE"门店, "STORE_ACTIVITY"活动 目前暂时不支持线下商品类型
-	StoreType           string               `json:"store_type"`             // 门店类型，（storepro_unit 为 "STORE" 时有值。 取值: "STORE_NORMAL"平台通用门店, "STORE_THIRT_PARTY"第三方门店, "STORE_DOUYIN"抖音POI门店
-	AdvertiserStoreIds  []int64              `json:"advertiser_store_ids"`   // 门店ID列表 （storepro_unit 为 "STORE" 时有值
-	StoreproPackId      int64                `json:"storepro_pack_id"`       // 活动ID （storepro_unit 为 "STORE_ACTIVITY" 时有值
-	ProductLlatformId   int64                `json:"product_platform_id"`    // 产品目录ID(ID由查询产品目录接口得到), 当推广目的landing_type为DPA时有值
-	ProductId           int64                `json:"product_id"`             // 商品id，当推广目的为 DPA 广告组商品类型为 SDPA 时有值
-	CategoryType        string               `json:"category_type"`          // DPA投放范围，取值：NONE不限，"CATEGORY"选择分类，"PRODUCT"指定商品
-	DpaCategories       []int64              `json:"dpa_categories"`         // 分类列表，category_type取值范围为CATEGORY时有值
-	DpaProducts         []int64              `json:"dpa_products"`           // 商品列表，category_type为PRODUCT时有值
-	DpaProductTarget    []AdDpaProductTarget `json:"dpa_product_target"`     // 自定义筛选条件（商品投放条件）。用于圈定商品投放范围，结合商品库字段搭配判断条件，圈定商品投放范围。
-	DpaAdtype           []string             `json:"dpa_adtype"`             // dpa广告类型，取值范围："DPA_LINK"落地页, "DPA_APP"应用下载
-	ParamsType          string               `json:"params_type"`            // 链接类型(落地页)，当dpa_adtype为"DPA_LINK"时有值，取值: "DPA"商品库所含链接, "CUSTOM"自定义链接
-	DpaExternalUrlField string               `json:"dpa_external_url_field"` // 落地页链接字段选择，当params_type为"DPA"时有值
-	DpaExternalUrls     []string             `json:"dpa_external_urls"`      // 落地页链接地址列表，当params_type为"CUSTOM"时有值
-	Package             string               `json:"package"`                // 应用包名，当推广类型为应用推广且download_type为DOWNLOAD_URL时或当推广类型为DPA(商品目录推广)且dpa_adtype为DPA_APP有值
-	InventoryType       []string             `json:"inventory_type"`         // 创意投放位置,详见【附录-投放位置】。创建选择优选广告位时，此字段回会返回对应的优选广告位
-	PromotionType       string               `json:"promotion_type"`         // 投放内容 GOODS：商品推广 LIVE：直播 AWEME_HOME_PAGE：抖音主页 LANDING_PAGE_LINK：落地页
-	AwemeAccount        string               `json:"aweme_account"`          // 抖音号
-	SubscribeUrl        string               `json:"subscribe_url"`          // 	游戏营销场景-预约下载链接
-	FormId              int64                `json:"form_id"`                // 	游戏营销场景-表单id
-	FormIndex           int64                `json:"form_index"`             // 	游戏营销场景-表单位置索引
-	AppDesc             string               `json:"app_desc"`               // 	游戏营销场景-应用描述
-	AppIntroduction     string               `json:"app_introduction"`       // 	游戏营销场景-应用介绍
-	AppThumbnails       []string             `json:"app_thumbnails"`         // 	游戏营销场景-应用图片集，返回图片集Id
-	DpaOpenUrlType      string               `json:"dpa_open_url_type"`      // 直达链接类型，取值: "NONE"不启用, "DPA"商品库所含链接, "CUSTOM"自定义链接 商品库链接对应商品库内调起字段
-	DpaOpenUrlField     string               `json:"dpa_open_url_field"`     // 直达链接字段选择，当dpa_open_url_type为"DPA"时有值
-	DpaOpenUrls         []string             `json:"dpa_open_urls"`          // 达链接地址列表，当dpa_open_url_type为"CUSTOM"时有值
-	ExternalUrlParams   string               `json:"external_url_params"`    // 落地页检测参数(DPA推广目的特有,在填写的参数后面添加"=urlencode(开放平台提供的h5链接地址）"，其中urlencode(开放平台提供的h5链接地址）替换为商品库中的h5地址encode的结果)
-	OpenUrlParams       string               `json:"open_url_params"`        // 直达链接检测参数(DPA推广目的特有,在“产品库中提取的scheme地址"后面追加填写的参数)
+	StoreProUnit        string               `json:"storepro_unit,omitempty"`          // 门店推广-投放内容，当推广目的为STORE(门店推广)时有值。 取值: "STORE"门店, "STORE_ACTIVITY"活动 目前暂时不支持线下商品类型
+	StoreType           string               `json:"store_type,omitempty"`             // 门店类型，（storepro_unit 为 "STORE" 时有值。 取值: "STORE_NORMAL"平台通用门店, "STORE_THIRT_PARTY"第三方门店, "STORE_DOUYIN"抖音POI门店
+	AdvertiserStoreIds  []int64              `json:"advertiser_store_ids,omitempty"`   // 门店ID列表 （storepro_unit 为 "STORE" 时有值
+	StoreProPackId      int64                `json:"storepro_pack_id,omitempty"`       // 活动ID （storepro_unit 为 "STORE_ACTIVITY" 时有值
+	ProductPlatformId   int64                `json:"product_platform_id,omitempty"`    // 产品目录ID(ID由查询产品目录接口得到), 当推广目的landing_type为DPA时有值
+	ProductId           int64                `json:"product_id,omitempty"`             // 商品id，当推广目的为 DPA 广告组商品类型为 SDPA 时有值
+	CategoryType        string               `json:"category_type,omitempty"`          // DPA投放范围，取值：NONE不限，"CATEGORY"选择分类，"PRODUCT"指定商品
+	DpaCategories       []int64              `json:"dpa_categories,omitempty"`         // 分类列表，category_type取值范围为CATEGORY时有值
+	DpaProducts         []int64              `json:"dpa_products,omitempty"`           // 商品列表，category_type为PRODUCT时有值
+	DpaProductTarget    []AdDpaProductTarget `json:"dpa_product_target,omitempty"`     // 自定义筛选条件（商品投放条件）。用于圈定商品投放范围，结合商品库字段搭配判断条件，圈定商品投放范围。
+	DpaAdType           []string             `json:"dpa_adtype,omitempty"`             // dpa广告类型，取值范围："DPA_LINK"落地页, "DPA_APP"应用下载
+	ParamsType          string               `json:"params_type,omitempty"`            // 链接类型(落地页)，当dpa_adtype为"DPA_LINK"时有值，取值: "DPA"商品库所含链接, "CUSTOM"自定义链接
+	DpaExternalUrlField string               `json:"dpa_external_url_field,omitempty"` // 落地页链接字段选择，当params_type为"DPA"时有值
+	DpaExternalUrls     []string             `json:"dpa_external_urls,omitempty"`      // 落地页链接地址列表，当params_type为"CUSTOM"时有值
+	Package             string               `json:"package,omitempty"`                // 应用包名，当推广类型为应用推广且download_type为DOWNLOAD_URL时或当推广类型为DPA(商品目录推广)且dpa_adtype为DPA_APP有值
+	InventoryType       []string             `json:"inventory_type,omitempty"`         // 创意投放位置,详见【附录-投放位置】。创建选择优选广告位时，此字段回会返回对应的优选广告位
+	PromotionType       string               `json:"promotion_type,omitempty"`         // 投放内容 GOODS：商品推广 LIVE：直播 AWEME_HOME_PAGE：抖音主页 LANDING_PAGE_LINK：落地页
+	AwemeAccount        string               `json:"aweme_account,omitempty"`          // 抖音号
+	SubscribeUrl        string               `json:"subscribe_url,omitempty"`          // 	游戏营销场景-预约下载链接
+	FormId              int64                `json:"form_id,omitempty"`                // 	游戏营销场景-表单id
+	FormIndex           int64                `json:"form_index,omitempty"`             // 	游戏营销场景-表单位置索引
+	AppDesc             string               `json:"app_desc,omitempty"`               // 	游戏营销场景-应用描述
+	AppIntroduction     string               `json:"app_introduction,omitempty"`       // 	游戏营销场景-应用介绍
+	AppThumbnails       []string             `json:"app_thumbnails,omitempty"`         // 	游戏营销场景-应用图片集，返回图片集Id
+	DpaOpenUrlType      string               `json:"dpa_open_url_type,omitempty"`      // 直达链接类型，取值: "NONE"不启用, "DPA"商品库所含链接, "CUSTOM"自定义链接 商品库链接对应商品库内调起字段
+	DpaOpenUrlField     string               `json:"dpa_open_url_field,omitempty"`     // 直达链接字段选择，当dpa_open_url_type为"DPA"时有值
+	DpaOpenUrls         []string             `json:"dpa_open_urls,omitempty"`          // 达链接地址列表，当dpa_open_url_type为"CUSTOM"时有值
+	ExternalUrlParams   string               `json:"external_url_params,omitempty"`    // 落地页检测参数(DPA推广目的特有,在填写的参数后面添加"=urlencode(开放平台提供的h5链接地址）"，其中urlencode(开放平台提供的h5链接地址）替换为商品库中的h5地址encode的结果)
+	OpenUrlParams       string               `json:"open_url_params,omitempty"`        // 直达链接检测参数(DPA推广目的特有,在“产品库中提取的scheme地址"后面追加填写的参数)
 	AdGamePackage
 	AdAudience
 	CommodityAudience
@@ -230,10 +230,10 @@ type AdAdGetRspDataList struct {
 }
 
 type AdDpaProductTarget struct {
-	Title string `json:"title"` // 筛选字段
-	Rule  string `json:"rule"`  // 定向规则，允许值：'=', '!=', '>', '<', '>=', '<=', 'contain', 'exclude', 'notEmpty'
-	Type  string `json:"type"`  // 字段类型，允许值：'int', 'double', 'long', 'string'
-	Value string `json:"value"` // 	规则值
+	Title string `json:"title,omitempty"` // 筛选字段
+	Rule  string `json:"rule,omitempty"`  // 定向规则，允许值：'=', '!=', '>', '<', '>=', '<=', 'contain', 'exclude', 'notEmpty'
+	Type  string `json:"type,omitempty"`  // 字段类型，允许值：'int', 'double', 'long', 'string'
+	Value string `json:"value,omitempty"` // 	规则值
 }
 type AdGamePackage struct {
 	GamePackageDesc         string   `json:"game_package_desc,omitempty"`          // 应用描述,最少1字，最多15字
@@ -290,43 +290,43 @@ type AdAudience struct {
 }
 
 type AdBudgetUpdateReq struct {
-	AdvertiserId int64          `json:"advertiser_id"`
+	AdvertiserId int64          `json:"advertiser_id,omitempty"`
 	Data         []AdBudgetData `json:"data,omitempty"` // 批量修改预算，包含计划ID和预算，list长度限制1～100.
 }
 
 type AdBudgetData struct {
-	AdId int64 `json:"ad_id"` // 广告计划ID，广告计划id需要属于广告主，且ad_id不能重复，否则会报错！
+	AdId int64 `json:"ad_id,omitempty"` // 广告计划ID，广告计划id需要属于广告主，且ad_id不能重复，否则会报错！
 	// 预算，单位：元。
 	// 24小时内修改预算操作，不能超过20次，24小时是指自然天的24小时；
 	// 单次修改预算幅度不能低于100元（增加或者减少）;
 	// 修改后预算金额，不能低于当前已消费金额的105%，以整百单位向上取整；
-	Budget int64 `json:"budget"`
+	Budget int64 `json:"budget,omitempty"`
 }
 
 type AdBudgetUpdateRsp struct {
-	Code      int                   `json:"code"`
-	Message   string                `json:"message"`
-	Data      AdBudgetUpdateRspData `json:"data"`
-	RequestId string                `json:"request_id"`
+	Code      int                   `json:"code,omitempty"`
+	Message   string                `json:"message,omitempty"`
+	Data      AdBudgetUpdateRspData `json:"data,omitempty"`
+	RequestId string                `json:"request_id,omitempty"`
 }
 
 type AdBudgetUpdateRspData struct {
-	AdIds []int64 `json:"ad_ids"`
+	AdIds []int64 `json:"ad_ids,omitempty"`
 }
 
 type AdStatusUpdateReq struct {
-	AdvertiserId int64    `json:"advertiser_id"`
-	AdIds        []int64  `json:"ad_ids"`
-	OptStatus    AdStatus `json:"opt_status"`
+	AdvertiserId int64    `json:"advertiser_id,omitempty"`
+	AdIds        []int64  `json:"ad_ids,omitempty"`
+	OptStatus    AdStatus `json:"opt_status,omitempty"`
 }
 
 type AdStatusUpdateRsp struct {
-	Code      int                   `json:"code"`
-	Message   string                `json:"message"`
-	Data      AdStatusUpdateRspData `json:"data"`
-	RequestId string                `json:"request_id"`
+	Code      int                   `json:"code,omitempty"`
+	Message   string                `json:"message,omitempty"`
+	Data      AdStatusUpdateRspData `json:"data,omitempty"`
+	RequestId string                `json:"request_id,omitempty"`
 }
 
 type AdStatusUpdateRspData struct {
-	AdIds []int64 `json:"ad_ids"`
+	AdIds []int64 `json:"ad_ids,omitempty"`
 }

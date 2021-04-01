@@ -26,22 +26,6 @@ type UploadType string        // 上传方式
 type AdStatus string          // 广告状态
 type CreativeImageMode string // 媒体素材类型
 type LearningPhase string     // 计划学习期状态
-//func (a *BudgetMode) UnmarshalJSON(data []byte) error {
-//	var rs string
-//	if err := json.Unmarshal(data, &rs); err != nil {
-//		return err
-//	}
-//	*a = BudgetMode(rs)
-//	switch rs {
-//	case "BUDGET_MODE_INFINITE":
-//		*a = BudgetModeInfinite
-//	case "BUDGET_MODE_DAY":
-//		*a = BudgetModeDay
-//	case "BUDGET_MODE_TOTAL":
-//		*a = BudgetModeTotal
-//	}
-//	return nil
-//}
 
 const (
 	BudgetModeInfinite BudgetMode = "BUDGET_MODE_INFINITE" // 不限
@@ -208,8 +192,8 @@ const (
 )
 
 type PageInfo struct {
-	Page        int `json:"page"`         // 页数
-	PageSize    int `json:"page_size"`    // 页面大小
-	TotalNumber int `json:"total_number"` // 总数
-	TotalPage   int `json:"total_page"`   // 总页数
+	Page        int `json:"page,omitempty"`         // 页数
+	PageSize    int `json:"page_size,omitempty"`    // 页面大小
+	TotalNumber int `json:"total_number,omitempty"` // 总数
+	TotalPage   int `json:"total_page,omitempty"`   // 总页数
 }

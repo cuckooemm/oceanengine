@@ -20,6 +20,10 @@ func (c *AdConfig) SetAccessToken(token string) {
 	c.accessTokenMu.Unlock()
 }
 
+func (c *AdConfig) SetUserAgent(userAgent string) {
+	c.UserAgent = userAgent
+}
+
 type AdConfig struct {
 	BasePath      string            `json:"basePath,omitempty"`
 	Host          string            `json:"host,omitempty"`

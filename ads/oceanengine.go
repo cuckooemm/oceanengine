@@ -2,9 +2,9 @@ package ads
 
 import (
 	"fmt"
+	"github.com/cuckooemm/oceanengine/api"
+	"github.com/cuckooemm/oceanengine/conf"
 	"net/http"
-	"probe_material_plan/marketing/oceanengine/api"
-	"probe_material_plan/marketing/oceanengine/conf"
 )
 
 type AdClient struct {
@@ -15,7 +15,8 @@ type AdClient struct {
 	Client         *api.APIClient
 }
 
-func Init(cfg *conf.AdConfig) *AdClient {
+func Init(debug bool) *AdClient {
+	cfg := conf.NewAdConfig(debug)
 	cli := &AdClient{
 		Cfg:          cfg,
 		RoundTripper: http.DefaultTransport,
