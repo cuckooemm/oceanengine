@@ -5,18 +5,18 @@ import "github.com/antihax/optional"
 // 广告组添加请求结构
 type AdCampaignAddReq struct {
 	// 广告主ID
-	AdvertiserId int64 `json:"advertiser_id"`
+	AdvertiserId int64 `json:"advertiser_id,omitempty"`
 	// 广告组名称，长度为1-100个字符，其中1个中文字符算2位
-	CampaignName string `json:"campaign_name"`
+	CampaignName string `json:"campaign_name,omitempty"`
 	// 广告组状态  允许值: "enable","disable"默认值：enable开启状态
 	Operation string `json:"operation,omitempty"`
 	//  广告组预算类型, 允许值: "BUDGET_MODE_INFINITE","BUDGET_MODE_DAY"
-	BudgetMode BudgetMode `json:"budget_mode"`
+	BudgetMode BudgetMode `json:"budget_mode,omitempty"`
 	// 广告组预算，取值范围: ≥ 0 当budget_mode为"BUDGET_MODE_DAY"时,必填,且日预算不少于300元
 	Budget int64 `json:"budget,omitempty"`
 	// 广告组推广目的, (创建后不可修改)
 	//    允许值: "LINK","APP","DPA","GOODS","STORE","SHOP","AWEME"
-	LandingType LandingType `json:"landing_type"`
+	LandingType LandingType `json:"landing_type,omitempty"`
 	// 广告组商品类型 (创建后不可修改)
 	// 允许值:
 	//    CAMPAIGN_DPA_DEFAULT_NOT: 非 DPA
@@ -44,41 +44,41 @@ type AdCampaignGetOptsFiltering struct {
 }
 
 type AdCampaignGetRspData struct {
-	List     []AdCampaignGetRspDataList `json:"list"`
-	PageInfo PageInfo                   `json:"page_info"`
+	List     []AdCampaignGetRspDataList `json:"list,omitempty"`
+	PageInfo PageInfo                   `json:"page_info,omitempty"`
 }
 
 type AdCampaignGetRspDataList struct {
-	Id                 int64  `json:"id"`                   // 广告组ID
-	Name               string `json:"name"`                 // 广告组名称
-	Budget             string `json:"budget"`               // 广告组预算
-	BudgetMode         string `json:"budget_mode"`          // 广告组预算类型
-	LandingType        string `json:"landing_type"`         // 广告组推广目的
-	ModifyTime         string `json:"modify_time"`          // 广告组时间戳,用于更新时提交,服务端判断是否基于最新信息修改
-	Status             string `json:"status"`               // 广告组状态,详见
-	CampaignCreateTime string `json:"campaign_create_time"` // 广告组创建时间, 格式：yyyy-mm-dd hh:MM:ss
-	CampaignModifyTime string `json:"campaign_modify_time"` // 广告组修改时间, 格式：yyyy-mm-dd hh:MM:ss
-	DeliveryRelatedNum string `json:"delivery_related_num"` // 广告组商品类型
-	DeliveryMode       string `json:"delivery_mode"`        // 投放类型，允许值：MANUAL（手动）、PROCEDURAL（自动，投放管家
+	Id                 int64  `json:"id,omitempty"`                   // 广告组ID
+	Name               string `json:"name,omitempty"`                 // 广告组名称
+	Budget             string `json:"budget,omitempty"`               // 广告组预算
+	BudgetMode         string `json:"budget_mode,omitempty"`          // 广告组预算类型
+	LandingType        string `json:"landing_type,omitempty"`         // 广告组推广目的
+	ModifyTime         string `json:"modify_time,omitempty"`          // 广告组时间戳,用于更新时提交,服务端判断是否基于最新信息修改
+	Status             string `json:"status,omitempty"`               // 广告组状态,详见
+	CampaignCreateTime string `json:"campaign_create_time,omitempty"` // 广告组创建时间, 格式：yyyy-mm-dd hh:MM:ss
+	CampaignModifyTime string `json:"campaign_modify_time,omitempty"` // 广告组修改时间, 格式：yyyy-mm-dd hh:MM:ss
+	DeliveryRelatedNum string `json:"delivery_related_num,omitempty"` // 广告组商品类型
+	DeliveryMode       string `json:"delivery_mode,omitempty"`        // 投放类型，允许值：MANUAL（手动）、PROCEDURAL（自动，投放管家
 }
 
 type AdCampaignGetRsp struct {
-	Code      int                  `json:"code"`
-	Message   string               `json:"message"`
-	Data      AdCampaignGetRspData `json:"data"`
-	RequestId string               `json:"request_id"`
+	Code      int                  `json:"code,omitempty"`
+	Message   string               `json:"message,omitempty"`
+	Data      AdCampaignGetRspData `json:"data,omitempty"`
+	RequestId string               `json:"request_id,omitempty"`
 }
 
 // 广告组添加响应结构
 type AdCampaignAddRsp struct {
-	Code      int                  `json:"code"`
-	Message   string               `json:"message"`
-	Data      AdCampaignAddRspData `json:"data"`
-	RequestId string               `json:"request_id"`
+	Code      int                  `json:"code,omitempty"`
+	Message   string               `json:"message,omitempty"`
+	Data      AdCampaignAddRspData `json:"data,omitempty"`
+	RequestId string               `json:"request_id,omitempty"`
 }
 
 // 广告组添加响应数据
 type AdCampaignAddRspData struct {
 	// 广告组id
-	CampaignId int64 `json:"campaign_id"`
+	CampaignId int64 `json:"campaign_id,omitempty"`
 }

@@ -2,10 +2,10 @@ package api
 
 import (
 	"context"
+	"github.com/cuckooemm/oceanengine/models"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"probe_material_plan/marketing/oceanengine/models"
 	"strconv"
 )
 
@@ -48,7 +48,7 @@ func (t *ToolsApiService) GetIndustry(ctx context.Context, advId int64, opts mod
 		}
 		return result.Data.List, rsp.Header, nil
 	}
-	return result.Data.List, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data.List, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }
 
 // 获取行动号召字段内容，注意：结合附加创意类型以及广告主行业参数可以查询出更多细纬度的行动号召内容。
@@ -90,7 +90,7 @@ func (t *ToolsApiService) GetActionText(ctx context.Context, advId int64, Landin
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }
 
 // 获取广告计划学习期状态。关于学习期
@@ -127,7 +127,7 @@ func (t *ToolsApiService) GetAdLearnStat(ctx context.Context, advId int64, adIds
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }
 
 // 查询计划的广告质量度，只有产生过投放消耗的计划才会有质量度数据。
@@ -162,7 +162,7 @@ func (t *ToolsApiService) GetAdQuality(ctx context.Context, advId int64, adIds [
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }
 
 // 查询计划的广告质量度，只有产生过投放消耗的计划才会有质量度数据。
@@ -197,5 +197,5 @@ func (t *ToolsApiService) GetAdDiagnosis(ctx context.Context, advId int64, adIds
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }

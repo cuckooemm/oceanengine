@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"github.com/cuckooemm/oceanengine/models"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/url"
-	"probe_material_plan/marketing/oceanengine/models"
 	"strconv"
 )
 
@@ -46,7 +46,6 @@ func (m *MaterialApiService) UploadImage(ctx context.Context, params models.Mate
 	if isSetFilename && len(params.Filename) != 0 {
 		_ = w.WriteField("filename", params.Filename)
 	}
-	w.Boundary()
 	switch params.UploadType {
 	case models.UploadByUrl:
 		_ = w.WriteField("image_url", params.ImageUrl)
@@ -81,7 +80,7 @@ func (m *MaterialApiService) UploadImage(ctx context.Context, params models.Mate
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }
 
 // 通过此接口，用户可以上传和广告相关的素材视频。
@@ -113,7 +112,6 @@ func (m *MaterialApiService) UploadVideo(ctx context.Context, params models.Mate
 	if isSetFilename && len(params.Filename) != 0 {
 		_ = w.WriteField("filename", params.Filename)
 	}
-	w.Boundary()
 	if part, err = w.CreateFormFile("video_file", params.VideoFile.Name()); err != nil {
 		return result.Data, nil, err
 	}
@@ -143,7 +141,7 @@ func (m *MaterialApiService) UploadVideo(ctx context.Context, params models.Mate
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }
 
 // 通过此接口，用户可以进行同主体下不同广告主间的素材的推送。也就是说，将A广告主素材推送到，与A广告主主体（公司）相同的广告主。
@@ -184,7 +182,7 @@ func (m *MaterialApiService) PushMaterial(ctx context.Context, params models.Mat
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }
 
 // 通过此接口，用户可以获取针对素材视频推荐的智能封面。智能封面是通过提取视频关键帧筛选出推荐封面，帮助发现视频内优质封面素材。
@@ -225,7 +223,7 @@ func (m *MaterialApiService) GetVideoCover(ctx context.Context, advId int64, vid
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }
 
 // 通过此接口，用户可以获取经过一定条件过滤后的广告主下创意素材库对应的视频及视频信息。
@@ -275,5 +273,5 @@ func (m *MaterialApiService) GetVideo(ctx context.Context, advId int64, opts mod
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }

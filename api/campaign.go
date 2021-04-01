@@ -3,14 +3,14 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"github.com/cuckooemm/oceanengine/models"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"probe_material_plan/marketing/oceanengine/models"
 	"strconv"
 )
 
-type AdCampaignApiService service
+type CampaignApiService service
 
 /*
   创建广告组
@@ -23,7 +23,7 @@ type AdCampaignApiService service
   单次修改预算幅度不能低于100元（增加或者减少）；
   修改后预算金额，不能低于当前已消费金额的105%，以整百单位向上取整；
 */
-func (a *AdCampaignApiService) Add(ctx context.Context, params models.AdCampaignAddReq) (models.AdCampaignAddRspData, http.Header, error) {
+func (a *CampaignApiService) Add(ctx context.Context, params models.AdCampaignAddReq) (models.AdCampaignAddRspData, http.Header, error) {
 	var (
 		apiPath      = a.client.Cfg.BasePath + "/campaign/create/"
 		headerParams = make(map[string]string)
@@ -55,7 +55,7 @@ func (a *AdCampaignApiService) Add(ctx context.Context, params models.AdCampaign
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }
 
 /*
@@ -66,7 +66,7 @@ func (a *AdCampaignApiService) Add(ctx context.Context, params models.AdCampaign
 	默认不获取删除的广告组，如果要获取删除的广告组，可在filtering中传入对应的status值；
 	对于搜索广告组信息获取参见【搜索广告投放】
 */
-func (a *AdCampaignApiService) Get(ctx context.Context, advId int64, opts models.AdCampaignGetOpts) (models.AdCampaignGetRspData, http.Header, error) {
+func (a *CampaignApiService) Get(ctx context.Context, advId int64, opts models.AdCampaignGetOpts) (models.AdCampaignGetRspData, http.Header, error) {
 	var (
 		apiPath     = a.client.Cfg.BasePath + "/campaign/get/"
 		queryParams = url.Values{}
@@ -109,5 +109,5 @@ func (a *AdCampaignApiService) Get(ctx context.Context, advId int64, opts models
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }

@@ -3,12 +3,12 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"github.com/cuckooemm/oceanengine/models"
 	"io/ioutil"
 	"net/http"
-	"probe_material_plan/marketing/oceanengine/models"
 )
 
-type AdCreativeApiService service
+type CreativeApiService service
 
 // 每个计划下程序化创意和自定义创意为二选一，且无法修改；
 // 程序化创意: 最多10个标题、12个图片素材和10个视频素材;如果创建的是程序化创意（程序化创意实际会按照传入的title_list和image_list进行组合，对于效果不好的组合无法通过审核，获取到的都是审核通过的创意），只有在审核之后才会获取到创意数据与创意id；
@@ -23,7 +23,7 @@ type AdCreativeApiService service
 // 高级创意：预计10月份支持；
 
 // https://ad.oceanengine.com/openapi/doc/index.html?id=519
-func (a *AdCreativeApiService) Add(ctx context.Context, params models.AdCreativeAddReq) (models.AdCreativeAddRspData, http.Header, error) {
+func (a *CreativeApiService) Add(ctx context.Context, params models.AdCreativeAddReq) (models.AdCreativeAddRspData, http.Header, error) {
 	var (
 		apiPath      = a.client.Cfg.BasePath + "/creative/create_v2/"
 		headerParams = make(map[string]string)
@@ -55,5 +55,5 @@ func (a *AdCreativeApiService) Add(ctx context.Context, params models.AdCreative
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }

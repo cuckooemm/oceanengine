@@ -3,14 +3,14 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"github.com/cuckooemm/oceanengine/models"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"probe_material_plan/marketing/oceanengine/models"
 	"strconv"
 )
 
-type AdAdApiService service
+type AdApiService service
 
 // 此接口用于创建广告计划，对于搜索广告的创建可参照【搜索广告投放】
 //
@@ -30,7 +30,7 @@ type AdAdApiService service
 // 9. 对于不打算传的字段，不要传“”或者null，传了会校验!!!
 // 10. API目前不支持设置多转化目标；
 
-func (a *AdAdApiService) Add(ctx context.Context, params models.AdAdAddReq) (models.AdAdAddRspData, http.Header, error) {
+func (a *AdApiService) Add(ctx context.Context, params models.AdAdAddReq) (models.AdAdAddRspData, http.Header, error) {
 	var (
 		apiPath      = a.client.Cfg.BasePath + "/ad/create/"
 		headerParams = make(map[string]string)
@@ -62,7 +62,7 @@ func (a *AdAdApiService) Add(ctx context.Context, params models.AdAdAddReq) (mod
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }
 
 // 此接口用于获取广告计划列表的信息；
@@ -71,7 +71,7 @@ func (a *AdAdApiService) Add(ctx context.Context, params models.AdAdAddReq) (mod
 // 默认不获取删除的计划，如果要获取删除的计划，可在filtering中传入对应的status值；
 // 对于搜索广告计划信息获取参见【搜索广告投放】
 
-func (a *AdAdApiService) Get(ctx context.Context, advId int64, opts models.AdAdGetOpts) (models.AdAdGetRspData, http.Header, error) {
+func (a *AdApiService) Get(ctx context.Context, advId int64, opts models.AdAdGetOpts) (models.AdAdGetRspData, http.Header, error) {
 	var (
 		apiPath     = a.client.Cfg.BasePath + "/ad/get/"
 		queryParams = url.Values{}
@@ -113,7 +113,7 @@ func (a *AdAdApiService) Get(ctx context.Context, advId int64, opts models.AdAdG
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }
 
 // 通过此接口用于更新广告计划的预算；
@@ -121,7 +121,7 @@ func (a *AdAdApiService) Get(ctx context.Context, advId int64, opts models.AdAdG
 // 24小时内修改预算操作，不能超过20次，24小时是指自然天的24小时；
 // 单次修改预算幅度不能低于100元（增加或者减少）；
 // 修改后预算金额，不能低于当前已消费金额的105%，以整百单位向上取整；
-func (a *AdAdApiService) BudgetUpdate(ctx context.Context, advId int64, data []models.AdBudgetData) (models.AdBudgetUpdateRspData, http.Header, error) {
+func (a *AdApiService) BudgetUpdate(ctx context.Context, advId int64, data []models.AdBudgetData) (models.AdBudgetUpdateRspData, http.Header, error) {
 	var (
 		apiPath      = a.client.Cfg.BasePath + "/ad/update/budget/"
 		headerParams = make(map[string]string)
@@ -153,14 +153,14 @@ func (a *AdAdApiService) BudgetUpdate(ctx context.Context, advId int64, data []m
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }
 
 // 通过此接口可对计划做启用/暂停/删除操作；
 // 一次可以处理100个计划
 // 对于删除的计划不能再进行状态操作，否则会报错！
 // 如果有一个计划有问题，全部计划修改都不会成功！请确保传入的计划属于此广告主以及处于非删除状态。
-func (a *AdAdApiService) UpdateStatus(ctx context.Context, advId int64, adIds []int64, status models.AdStatus) (models.AdStatusUpdateRspData, http.Header, error) {
+func (a *AdApiService) UpdateStatus(ctx context.Context, advId int64, adIds []int64, status models.AdStatus) (models.AdStatusUpdateRspData, http.Header, error) {
 	var (
 		apiPath      = a.client.Cfg.BasePath + "/ad/update/status/"
 		headerParams = make(map[string]string)
@@ -176,7 +176,7 @@ func (a *AdAdApiService) UpdateStatus(ctx context.Context, advId int64, adIds []
 	if req, err = a.client.prepareRequest(ctx, apiPath, http.MethodPost, postBody, headerParams, nil); err != nil {
 		return result.Data, nil, err
 	}
-	if rsp, err = a.client.callAPI(req); err != nil || rsp == nil {
+	if rsp, err = a.client.callAPI(req); err != nil {
 		return result.Data, nil, err
 	}
 	defer rsp.Body.Close()
@@ -192,5 +192,5 @@ func (a *AdAdApiService) UpdateStatus(ctx context.Context, advId int64, adIds []
 		}
 		return result.Data, rsp.Header, nil
 	}
-	return result.Data, rsp.Header, NewApiSwaggerError(rsp.StatusCode, rspBody, rsp.Status, "")
+	return result.Data, rsp.Header, NewApiSwaggerError(50000, rspBody, rsp.Status, "")
 }
